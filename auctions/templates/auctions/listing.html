@@ -1,0 +1,134 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+    <!-- Start of the product's details -->
+    <div class="listing-container">
+        <div class="listing">
+
+            <h2 class="listing-detail"> {{auction.title}} </h2>
+
+            <div class="seperator"></div>
+
+            <div class="listing-detail"><img src="{{auction.image}}" alt="No image listed" width="380" height="250" id="image"></div>
+
+            <div class="seperator"></div>
+
+            <div class="listing-detail">
+                <div>Description: </div>
+                {{auction.description}}
+            </div>
+
+            <div class="seperator"></div>
+
+            <div class="listing-detail"><strong>Price: {{bid.highestBid}}$</strong></div>
+
+            <div class="listing-detail">{{bid.bidders}} bid(s) so far</div>
+
+            <div class="listing-detail">
+                {% if  auction.category %}
+                    Category: {{auction.category}}
+                {% endif %}
+            </div>
+
+            <div class="listing-detail">current holder: {{bid.highestBidder}}</div>
+
+            <div class="listing-detail">created on {{auction.date}}</div>          
+
+            <div class="listing-detail">Listed by: {{auction.author}}</div>
+
+            <br>
+            <!-- End of the product's details -->
+            
+            <!-- the form that allow users to bid -->
+            <form action="{% url 'bid' %}" method="POST">
+                {% csrf_token %}
+                {% if auction.open %}
+
+                    <div class="form-group">
+                        <input type="text" class="form-control" id="bid" placeholder="Enter Amount" name="bid"  autocomplete="off">
+                    </div>
+
+                    <input type="hidden" value={{auction.id}} name="auctionId">
+                    
+                    <button type="submit" class="btn btn-primary">Place bid</button>
+
+                {% else %}
+                
+                    <div class="form-group">
+                        <input type="text" class="form-control" id="bid" placeholder="Enter Amount" name="bid" disabled>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary" disabled>Place bid</button>
+
+                {% endif %}
+                <hr style="background-color:black">
+            </form>
+
+
+            <!-- adding items to watch List or closing auction -->
+            {%if onWatchList %}
+                <a href="{% url 'remove' %}?auctionId={{auction.id}}"> Remove from watch List </a>
+            {% else %}
+                <a href="{% url 'add' %}?auctionId={{auction.id}}"> Add to watch List </a>
+            {% endif %}
+
+            {% if user == auction.author and auction.open %}
+                <a href="{% url 'close' %}?auctionId={{auction.id}}"> - Close listing </a>
+            {% endif %}
+        </div>
+        <div class="vseperator"></div>
+
+        <!-- start of the comment section -->
+        <div class="comments">
+            <h2> Comments </h2>
+            <div class="comment-container">
+                <div>
+                    <ul class="list-group">
+                            {% for comment in comments %}
+                            <li class="list-group-item">
+                                <div>
+                                    by <strong> {{comment.commenter}} </strong>
+                                </div>
+                                <div>
+                                    {{comment.content}}
+                                </div>
+                                <div>
+                                    <small class="form-text text-muted">{{comment.date_created}}</small>
+                                </div>
+                            </li>
+                            {% empty %}
+                                No comments yet, be the first to comment!
+                            {% endfor %}
+                          </ul>
+                    </div>
+            </div>
+
+            <!-- form for posting comments -->
+            <form action="{% url 'comment' %}" method="POST">
+                {% csrf_token %}
+                {% if auction.open %}
+                <div class="form-group">
+                    <input type="text" class="form-control" id="comment" placeholder="Voice your thoughts" name="comment"  autocomplete="off">
+                    <input type="hidden" value={{auction.id}} name="auctionId">
+                </div>
+                    <button type="submit" class="btn btn-primary">Add Comment</button>
+                {% else %}
+                <div class="form-group">
+                    <input type="text" class="form-control" id="comment" placeholder="Voice your thoughts" name="comment" disabled>
+                </div>
+                    <button type="submit" class="btn btn-primary" disabled>Add Comment</button>
+                {% endif %}
+
+                <!-- error handling -->
+                {% if message %}
+                    <strong> {{message}} </strong>
+                {% endif %}
+
+                {% if not auction.open and user == bid.highestBidder %}
+                    <strong> Congratulations you won the auction! </strong>
+                {% endif %}
+
+            </form>
+        </div>
+    </div>
+{% endblock %}

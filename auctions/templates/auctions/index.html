@@ -1,0 +1,47 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+<div class="body-container">
+
+    <h2> {{message}} </h2>
+    <div class="item-container">
+        {% for auction in auctions %}
+            <a href="{% url 'listing' id=auction.id %}">
+
+                <div>{{auction.title}}</div>
+
+                <div class="seperator"></div>
+
+                <div><img src="{{auction.image}}" alt="No image listed" width="380" height="250" id="image"></div>
+
+                <div class="seperator"></div>
+
+                <div>{{auction.description}}</div>
+
+                <div class="seperator"></div>
+
+                <div><strong>Price: {{auction.bid.highestBid}}$</strong></div>
+
+                <div>{{auction.bid.bidders}} bid(s) so far</div>
+
+                <div>created on {{auction.date}}</div>
+                
+                <div>
+                    status: 
+                    {% if auction.open %}
+                        open
+                    {% else %}
+                        closed
+                    {% endif %}
+                    
+                </div>
+                
+                <div>Listed by: {{auction.author}}</div>
+            </a>
+
+        {% empty %}
+            <h3> no items listed </h3>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,56 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+<div class="main-container">
+    <form action="{% url 'create' %}" method="POST" class="form_styling">
+            <h3> Listing Creation </h3>
+            <br>
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="title">Title</label>
+                <input type="text" class="form-control" id="title" placeholder="Enter Title" name="title">
+            </div>
+    
+            <div class="form-group">
+                <label for="description">Description</label>
+                <textarea class="form-control" id="description" rows="3" name="description" placeholder="Describe the item"></textarea>
+            </div>
+    
+            <div class="form-group">
+                <label for="startingBid">Starting Bid</label>
+                <input type="number" class="form-control" id="startingBid" name="startingBid" step="0.1" placeholder="Starting price">
+            </div>
+
+            <div id="optinal-text">
+                <small class="form-text text-muted">Optional</small>
+            </div>
+            <div class="form-group">
+                <label for="picture">Image Url</label>
+                <input type="text" class="form-control" id="picture" placeholder="Enter the image url" name="picture">
+            </div>
+            
+            <div class="form-group">
+                <label for="category">Category: </label>
+                <select class="form-select" id="category" name="category">
+                    <option selected>            No Category</option>
+                    <option value="Gaming">      Gaming     </option>
+                    <option value="Fashion">     Fashion    </option>
+                    <option value="Electronics"> Electronics</option>
+                    <option value="Home">        Home       </option>
+                    <option value="Toys">        Toys       </option>
+                </select>
+            </div>
+    
+            <div class="error-handle">
+                <button type="submit" class="btn btn-primary">Create Listing</button>
+                {% if  message %}
+                    <div class="alert alert-danger" role="alert" style="margin-top: 25px">
+                        {{message}}
+                    </div>
+                {% endif %}
+            </div>
+        </form>
+    </div>
+
+    
+{% endblock %}
